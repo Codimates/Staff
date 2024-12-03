@@ -1,77 +1,70 @@
-import React, { useState, useContext } from 'react';
-import axios from 'axios';
-import { FaEnvelope, FaLock, FaSignInAlt, FaUserPlus } from 'react-icons/fa';
-import { toast } from 'react-hot-toast';
-import { useNavigate } from 'react-router-dom';
-import { UserContext } from '../../context/UserContext';
-
-
+import React, { useState, useContext } from "react";
+import axios from "axios";
+import { FaEnvelope, FaLock, FaSignInAlt, FaUserPlus } from "react-icons/fa";
+import { toast } from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
+import { UserContext } from "../../context/UserContext";
 
 export default function SignCompo() {
   const navigate = useNavigate();
   const { setUser } = useContext(UserContext);
   const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState({
-    email: '',
-    password: ''
+    email: "",
+    password: "",
   });
 
   const loginUser = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    
+
     try {
       const { email, password } = data;
-      
+
       if (!email || !password) {
-        toast.error('Please fill in all fields');
+        toast.error("Please fill in all fields");
+        setIsLoading(false);
         return;
       }
 
-      const response = await axios.post('/user/loginstaff', { email, password });
+      const response = await axios.post("/user/loginstaff", { email, password });
       const userData = response.data;
 
       if (userData.error) {
         toast.error(userData.error);
       } else {
-        // If user role is customer, do not generate token
-        if (userData.role === 'customer') {
-          toast.error('Invalid user role: Customers cannot log in here.');
+        // Prevent customer role login
+        if (userData.role === "customer") {
+          toast.error("Invalid user role: Customers cannot log in here.");
+          localStorage.removeItem("user");
           setIsLoading(false);
-          //clean cookies tooken
-          localStorage.removeItem('user');
-          
-          
           return;
         }
-        setUser(userData);
-        // Update context and localStorage for valid roles
-        localStorage.setItem('user', JSON.stringify(userData));
-        
-        // Clear form
-        setData({ email: '', password: '' });
-        
-        // Show success message
-        toast.success('Successfully logged in!');
-        
-        // Navigate based on role
-        switch (userData.role) {
-          case 'inventorymanager':
-            navigate('/inventorymanagerdash');
-            break;
-          case 'admin':
-            navigate('/admindash');
-            break;
-          case 'salesmanager':
-            navigate('/salesmanagerdash');
-            break;
-          default:
-            toast.error('Invalid user role');
-        }
+
+        // Include email in the user data
+        const completeUserData = { ...userData, email };
+
+        // Update context and localStorage
+        setUser(completeUserData);
+        localStorage.setItem("user", JSON.stringify(completeUserData));
+
+        // Reset the form
+        setData({ email: "", password: "" });
+
+        // Success message and navigation
+        toast.success("Successfully logged in!");
+        const roleToRouteMap = {
+          admin: "/admindash",
+          inventorymanager: "/inventorymanagerdash",
+          salesmanager: "/salesmanagerdash",
+        };
+        navigate(roleToRouteMap[userData.role] || "/");
       }
     } catch (error) {
-      console.error('Error logging in:', error);
-      toast.error(error.response?.data?.message || 'Login failed. Please try again.');
+      console.error("Error logging in:", error);
+      toast.error(
+        error.response?.data?.message || "Login failed. Please try again."
+      );
     } finally {
       setIsLoading(false);
     }
@@ -79,33 +72,35 @@ export default function SignCompo() {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    setData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleRegisterClick = () => navigate('/register');
-  const handleForgotPassword = () => navigate('/forgot-password');
-  
+  const handleRegisterClick = () => navigate("/register");
+  const handleForgotPassword = () => navigate("/forgot-password");
+
   return (
     <div className="flex items-center justify-center min-h-[800px]">
       <div className="w-full max-w-sm p-8 space-y-6 bg-[#19191A] bg-opacity-50 rounded-lg shadow-md border border-orange-500 md:max-w-md lg:max-w-lg">
         {/* Header */}
-        <h2 className="text-3xl font-semibold text-center text-white">Welcome Back</h2>
-        
+        <h2 className="text-3xl font-semibold text-center text-white">
+          Welcome Back
+        </h2>
+
         {/* Form */}
         <form className="space-y-4" onSubmit={loginUser}>
           {/* Email Input */}
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-white text-start">
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-white text-start"
+            >
               Email
             </label>
             <div className="relative flex items-center mt-1">
               <FaEnvelope className="absolute text-orange-500 transform -translate-y-1/2 top-1/2 left-3" />
-              <input 
-                type="email" 
-                name="email" 
+              <input
+                type="email"
+                name="email"
                 id="email"
                 placeholder="Enter your email"
                 className="w-full pl-10 pr-4 py-2 text-[16px] text-white bg-[#19191A] border border-gray-600 rounded-lg focus:outline-none focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500 h-12"
@@ -119,14 +114,17 @@ export default function SignCompo() {
 
           {/* Password Input */}
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-white text-start">
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium text-white text-start"
+            >
               Password
             </label>
             <div className="relative mt-1">
               <FaLock className="absolute text-orange-500 transform -translate-y-1/2 top-1/2 left-3" />
-              <input 
-                type="password" 
-                name="password" 
+              <input
+                type="password"
+                name="password"
                 id="password"
                 placeholder="Enter your password"
                 className="w-full pl-10 pr-4 py-2 text-[16px] text-white bg-[#19191A] border border-gray-600 rounded-lg focus:outline-none focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500 h-12"
@@ -140,8 +138,8 @@ export default function SignCompo() {
 
           {/* Forgot Password */}
           <div className="text-right">
-            <button 
-              type="button" 
+            <button
+              type="button"
               onClick={handleForgotPassword}
               className="text-sm text-blue-500 transition-colors hover:underline hover:text-blue-400"
             >
@@ -151,8 +149,8 @@ export default function SignCompo() {
 
           {/* Sign In Button */}
           <div>
-            <button 
-              type="submit" 
+            <button
+              type="submit"
               className="flex items-center justify-center w-full h-12 px-4 py-2 space-x-2 text-[16px] font-medium text-white bg-orange-500 rounded-lg hover:bg-orange-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               disabled={isLoading}
             >
@@ -167,19 +165,21 @@ export default function SignCompo() {
             </button>
           </div>
 
+          {/* Divider */}
           <div className="pt-3 pb-1">
             <hr className="border-gray-600" />
           </div>
 
+          {/* Sign Up Prompt */}
           <div className="text-center">
             <h1 className="text-white text-[16px]">Don't have an account?</h1>
           </div>
 
-          {/* Sign Up Link */}
+          {/* Sign Up Button */}
           <div className="text-center">
-            <button 
-              onClick={handleRegisterClick} 
-              type="button" 
+            <button
+              onClick={handleRegisterClick}
+              type="button"
               className="flex items-center justify-center w-full h-12 px-4 py-2 space-x-2 text-[16px] text-yellow-500 border border-yellow-500 rounded-lg hover:bg-yellow-500 hover:text-white transition-all duration-300 disabled:opacity-50"
               disabled={isLoading}
             >
