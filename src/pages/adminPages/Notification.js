@@ -8,9 +8,15 @@ function Notification() {
   useEffect(() => {
     const socket = io("http://localhost:4004");
 
-    const email = JSON.parse(localStorage.getItem("user")).Email;
+    const token = localStorage.getItem("user");
     // Send event to request notifications
-    socket.emit("Registernotifyget" ,{email});
+
+    const user = JSON.parse(token);
+    const email = user.email;
+
+    console.log(email);
+
+    socket.emit("Registernotifyget", { email });
 
     // Listen for notifications
     socket.on("getNotifications", (data) => {
@@ -37,7 +43,14 @@ function Notification() {
   const handelviewed = (id) => {
     const socket = io("http://localhost:4004");
 
-    const email = JSON.parse(localStorage.getItem("user")).Email;
+     const token = localStorage.getItem("user");
+    // Send event to request notifications
+
+    const user = JSON.parse(token);
+    const email = user.email;
+    
+    console.log(email);
+    
     console.log(email, id);
 
     const data = { email, id };
