@@ -7,6 +7,7 @@ import { FaEdit } from "react-icons/fa";
 
 const InventoryManagement = () => {
   const [inventoryItems, setInventoryItems] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedItem, setSelectedItem] = useState(null);
@@ -39,6 +40,8 @@ const InventoryManagement = () => {
 
     fetchInventoryItems();
   }, []);
+
+  
 
   const toggleAddSite = async (item) => {
     try {
@@ -130,6 +133,41 @@ const InventoryManagement = () => {
       console.error('Failed to delete inventory item:', err);
     }
   };
+  const [originalInventoryItems, setOriginalInventoryItems] = useState([]);
+
+useEffect(() => {
+    const fetchInventoryItems = async () => {
+        try {
+            const response = await axios.get('/inventory/getalllaps');
+            setInventoryItems(response.data);
+            setOriginalInventoryItems(response.data); // Store original items
+            setLoading(false);
+        } catch (err) {
+            setError('Failed to fetch inventory items');
+            setLoading(false);
+        }
+    };
+
+    fetchInventoryItems();
+}, []);
+
+const handleSearchChange = (e) => {
+    const term = e.target.value.toLowerCase();
+    setSearchTerm(term);
+    
+    if (term === '') {
+        // If search is empty, reset to original items
+        setInventoryItems(originalInventoryItems);
+    } else {
+        // Filter items
+        const filtered = originalInventoryItems.filter(
+            item => 
+                item.brand_name.toLowerCase().includes(term) || 
+                item.model_name.toLowerCase().includes(term)
+        );
+        setInventoryItems(filtered);
+    }
+};
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>{error}</div>;
@@ -137,15 +175,29 @@ const InventoryManagement = () => {
   return (
     <div className="container p-4 mx-auto">
       <h2 className="mb-4 text-2xl font-bold">Inventory Items</h2>
-      <button
-        onClick={() => setShowCreateForm((prev) => !prev)}
-        className="px-4 py-2 mb-4 text-white bg-blue-500 rounded"
-      >
-        {showCreateForm ? 'Cancel' : 'Create New Inventory'}
-      </button>
+       {/* Search Box */}
+            <div className="mb-4">
+                <input
+                    type="text"
+                    value={searchTerm}
+                    onChange={handleSearchChange}
+                    placeholder="Search brands..."
+                    className="w-full p-2 border rounded"
+                />
+            </div>
+      <div className='flex justify-end'>
+          <button
+            onClick={() => setShowCreateForm((prev) => !prev)}
+            className="px-4 py-2 mb-4 text-white bg-blue-500 rounded"
+          >
+            {showCreateForm ? 'Cancel' : 'Create New Inventory'}
+          </button>
+      </div>
+      
       
       {showCreateForm && (
-        <form onSubmit={handleCreateInventory} className="p-4 mb-4 bg-gray-100 rounded">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <form onSubmit={handleCreateInventory} className="p-4 mb-4 bg-gray-100 rounded">
           <h3 className="mb-4 text-lg font-bold">Create New Inventory Item</h3>
           {createError && <p className="mb-4 text-red-500">{createError}</p>}
           <div className="grid grid-cols-2 gap-4">
@@ -205,15 +257,15 @@ const InventoryManagement = () => {
               required
               className="p-2 border rounded"
             />
-            <select
+            <input
+              type="text"
+              placeholder="special offer"
               value={newInventory.special_offer}
               onChange={(e) => setNewInventory({ ...newInventory, special_offer: e.target.value })}
+              required
               className="p-2 border rounded"
-            >
-              <option value="">Special Offer?</option>
-              <option value="true">Yes</option>
-              <option value="false">No</option>
-            </select>
+            />
+            
             <input
               type="file"
               multiple
@@ -224,12 +276,23 @@ const InventoryManagement = () => {
             />
           </div>
           <button
+                                onClick={() => {
+                                    setShowCreateForm(false);
+                                    
+                                }}
+                                className="px-4 py-2 mr-2 text-white bg-gray-500 rounded"
+                            >
+                                Cancel
+                            </button>
+          <button
             type="submit"
             className="px-4 py-2 mt-4 text-white bg-green-500 rounded"
           >
             Submit
           </button>
         </form>
+        </div>
+        
       )}
       
       <table className="w-full border border-collapse border-gray-300 table-auto">
@@ -306,7 +369,7 @@ const InventoryManagement = () => {
               <img
                 src={selectedItem.images[currentImageIndex]}
                 alt="inventory"
-                className="w-full h-auto rounded"
+                className="w-[300px] h-auto rounde"
               />
               <div className="absolute top-0 bottom-0 left-0 right-0 flex items-center justify-between">
                 <button
