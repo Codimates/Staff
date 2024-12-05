@@ -10,6 +10,8 @@ import Adminlanding from './pages/adminPages/Adminlanding';
 import InventoryManagerLanding from './pages/inventorymanager/InventoryManagerLanding';
 //import ProductManagerLanding from './pages/productmanager/ProductManagerLanding';
 import SalesManagerLanding from './pages/salesmanager/SalesManagerLanding';
+import Sales from './pages/salesmanager/Sales';
+import SalesManagerProfile from './pages/salesmanager/SalesManagerProfile';
 import ProtectedRoute from './protectedRouters/ProtectedRoute';
 import Notifacition from './pages/adminPages/Notification'
 import Inventory from './pages/inventorymanager/Inventory';
@@ -38,6 +40,8 @@ function App() {
           <Route path='/my-profile' element={<ProtectedRoute><Profile/></ProtectedRoute>}></Route>
           
           <Route path='/salesmanagerdash' element={<ProtectedRoute><SalesManagerLanding/></ProtectedRoute>}/>    
+          <Route path='/sales' element={<ProtectedRoute><Sales/></ProtectedRoute>}></Route>
+          <Route path='/salesmanager-profile' element={<ProtectedRoute><SalesManagerProfile/></ProtectedRoute>}></Route>
       
         </Routes>
         </UserContextProvider>
