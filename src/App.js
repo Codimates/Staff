@@ -16,6 +16,8 @@ import ProtectedRoute from './protectedRouters/ProtectedRoute';
 import Notifacition from './pages/adminPages/Notification'
 import Inventory from './pages/inventorymanager/Inventory';
 import Profile from './pages/inventorymanager/Profile';
+import Users from './pages/adminPages/Users';
+import UserProfile from './pages/adminPages/UserProfile';
 
 
 
@@ -33,6 +35,8 @@ function App() {
           <Route path='/home' element={<Home/>}/>
 
           <Route path='/admindash' element={<ProtectedRoute><Adminlanding/></ProtectedRoute>}/>
+          <Route path='/users' element={<ProtectedRoute><Users/></ProtectedRoute>}/>
+          <Route path='/profile' element={<ProtectedRoute><UserProfile/></ProtectedRoute>}/>
           <Route path='/Notifacition' element={<Notifacition/>}/>
           
           <Route path='/inventorymanagerdash' element={<ProtectedRoute><InventoryManagerLanding/></ProtectedRoute>}/>   

@@ -3,7 +3,10 @@ import axios from 'axios';
 import { FaTimes, FaArrowLeft, FaArrowRight } from 'react-icons/fa';
 import { IoEyeOutline } from 'react-icons/io5';
 import { MdDelete } from 'react-icons/md';
-import { FaEdit } from "react-icons/fa";
+import { FaEdit,FaSearch } from "react-icons/fa";
+import  toast,{ Toaster } from 'react-hot-toast';
+import UpdateInventoryModal from './UpdateInventoryModel';
+
 
 const InventoryManagement = () => {
   const [inventoryItems, setInventoryItems] = useState([]);
@@ -13,6 +16,7 @@ const InventoryManagement = () => {
   const [selectedItem, setSelectedItem] = useState(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showCreateForm, setShowCreateForm] = useState(false);
+  const [editingItem, setEditingItem] = useState(null); 
   const [newInventory, setNewInventory] = useState({
     brand_name: '',
     model_name: '',
@@ -25,8 +29,13 @@ const InventoryManagement = () => {
     images: null, // File input for images
   });
   const [createError, setCreateError] = useState('');
-
+  const[originalInventoryItems,setOriginalInventoryItems]=useState();
+  
   useEffect(() => {
+    fetchInventoryItems();
+}, []);
+
+  
     const fetchInventoryItems = async () => {
       try {
         const response = await axios.get('/inventory/getalllaps');
@@ -38,12 +47,18 @@ const InventoryManagement = () => {
       }
     };
 
-    fetchInventoryItems();
-  }, []);
+    const handleUpdateInventoryItem = (updatedItem) => {
+      // Update the inventory items list with the updated item
+      setInventoryItems((prevItems) => 
+        prevItems.map((item) => 
+          item._id === updatedItem._id ? updatedItem : item
+        )
+      );
+      // Close the editing modal
+      setEditingItem(null);
+    };
 
-  
-
-  const toggleAddSite = async (item) => {
+   const toggleAddSite = async (item) => {
     try {
       const updatedItem = { ...item, addsite: !item.addsite };
       await axios.put(`/inventory/addsite/${item._id}`, updatedItem);
@@ -106,6 +121,12 @@ const InventoryManagement = () => {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
 
+      toast.success(`Successfully created ${newInventory.brand_name} ${newInventory.model_name}!`, {
+        duration: 4000,
+        position: 'top-right',
+        
+      });
+
       setInventoryItems((prev) => [...prev, response.data.inventory]);
       setNewInventory({
         brand_name: '',
@@ -121,9 +142,18 @@ const InventoryManagement = () => {
       setShowCreateForm(false);
       setCreateError('');
     } catch (err) {
+
+      toast.error('Failed to create inventory item.', {
+        duration: 4000,
+        position: 'top-right',
+      });
       setCreateError('Failed to create inventory item.');
     }
   };
+
+  
+
+  
 
   const handleDeleteInventory = async (inventoryId) => {
     try {
@@ -133,7 +163,7 @@ const InventoryManagement = () => {
       console.error('Failed to delete inventory item:', err);
     }
   };
-  const [originalInventoryItems, setOriginalInventoryItems] = useState([]);
+  
 
 useEffect(() => {
     const fetchInventoryItems = async () => {
@@ -172,28 +202,38 @@ const handleSearchChange = (e) => {
   if (loading) return <div>Loading...</div>;
   if (error) return <div>{error}</div>;
 
+
+
   return (
     <div className="container p-4 mx-auto">
-      <h2 className="mb-4 text-2xl font-bold">Inventory Items</h2>
-       {/* Search Box */}
-            <div className="mb-4">
-                <input
-                    type="text"
-                    value={searchTerm}
-                    onChange={handleSearchChange}
-                    placeholder="Search brands..."
-                    className="w-full p-2 border rounded"
-                />
-            </div>
-      <div className='flex justify-end'>
-          <button
-            onClick={() => setShowCreateForm((prev) => !prev)}
-            className="px-4 py-2 mb-4 text-white bg-blue-500 rounded"
-          >
-            {showCreateForm ? 'Cancel' : 'Create New Inventory'}
-          </button>
-      </div>
+
+<Toaster position="top-right" />
       
+      <h2 className="mb-4 text-2xl font-bold">Inventory Items</h2>
+      <div className="flex items-center justify-between mb-4">
+  {/* Search Box */}
+  <div className="relative flex items-center">
+    <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-xl" />
+    <input
+      type="text"
+      value={searchTerm}
+      onChange={handleSearchChange}
+      placeholder="Search Products..."
+      className="w-96  pl-10 p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+    />
+  </div>
+
+  {/* Button */}
+  <div>
+    <button
+      onClick={() => setShowCreateForm((prev) => !prev)}
+      className="px-4 py-2 text-gray-700 hover:bg-gray-200 bg-gray-100 rounded-md"
+    >
+      {showCreateForm ? 'Cancel' : 'Create New Inventory'}
+    </button>
+  </div>
+</div>
+
       
       {showCreateForm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
@@ -276,14 +316,14 @@ const handleSearchChange = (e) => {
             />
           </div>
           <button
-                                onClick={() => {
-                                    setShowCreateForm(false);
-                                    
-                                }}
-                                className="px-4 py-2 mr-2 text-white bg-gray-500 rounded"
-                            >
-                                Cancel
-                            </button>
+            onClick={() => {
+                setShowCreateForm(false);
+                
+            }}
+            className="px-4 py-2 mr-2 text-white bg-gray-500 rounded"
+        >
+            Cancel
+        </button>
           <button
             type="submit"
             className="px-4 py-2 mt-4 text-white bg-green-500 rounded"
@@ -339,7 +379,7 @@ const handleSearchChange = (e) => {
                   <IoEyeOutline className="text-lg" />
                 </button>
                 <button
-                  onClick={() => setSelectedItem(item)}
+                  onClick={() => setEditingItem(item)}
                   className="px-4 py-2 text-green-500 "
                 >
                   <FaEdit className="text-lg" />
@@ -357,38 +397,97 @@ const handleSearchChange = (e) => {
       </table>
 
       {selectedItem && (
-        <div className="fixed inset-0 z-10 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="p-4 bg-white rounded-lg">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-xl font-bold">{selectedItem.brand_name} {selectedItem.model_name}</h3>
-              <button onClick={closeModal} className="text-red-500">
-                <FaTimes />
-              </button>
-            </div>
-            <div className="relative">
-              <img
-                src={selectedItem.images[currentImageIndex]}
-                alt="inventory"
-                className="w-[300px] h-auto rounde"
-              />
-              <div className="absolute top-0 bottom-0 left-0 right-0 flex items-center justify-between">
-                <button
-                  onClick={handlePrevImage}
-                  className="p-2 text-white bg-black bg-opacity-50"
-                >
-                  <FaArrowLeft />
-                </button>
-                <button
-                  onClick={handleNextImage}
-                  className="p-2 text-white bg-black bg-opacity-50"
-                >
-                  <FaArrowRight />
-                </button>
-              </div>
-            </div>
-          </div>
+  <div className="fixed inset-0 z-10 flex items-center justify-center bg-black bg-opacity-50">
+    <div className="w-96 p-6 bg-white rounded-lg shadow-xl">
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-xl font-bold text-gray-800">
+          {selectedItem.brand_name} {selectedItem.model_name}
+        </h3>
+        <button 
+          onClick={closeModal} 
+          className="text-red-500 hover:text-red-700 transition-colors"
+        >
+          <FaTimes />
+        </button>
+      </div>
+      
+      <div className="relative mb-4">
+        <img
+          src={selectedItem.images[currentImageIndex]}
+          alt="inventory"
+          className="w-full h-64 object-cover rounded-lg"
+        />
+        <div className="absolute top-1/2 transform -translate-y-1/2 w-full flex justify-between px-2">
+          <button
+            onClick={handlePrevImage}
+            className="p-2 bg-black bg-opacity-50 hover:bg-opacity-75 rounded-full text-white"
+          >
+            <FaArrowLeft />
+          </button>
+          <button
+            onClick={handleNextImage}
+            className="p-2 bg-black bg-opacity-50 hover:bg-opacity-75 rounded-full text-white"
+          >
+            <FaArrowRight />
+          </button>
         </div>
+      </div>
+
+      <div className=" border-t border-gray-100">
+        <dl className="divide-y divide-gray-100">
+          <div className="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+            <dt className="text-sm/6 font-medium text-gray-900">Inventory ID</dt>
+            <dd className="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">{selectedItem.inventory_id}</dd>
+          </div>
+
+          <div className="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+            <dt className="text-sm/6 font-medium text-gray-900">Product ID</dt>
+            <dd className="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">{selectedItem.product_id}</dd>
+          </div>
+
+          <div className="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+            <dt className="text-sm/6 font-medium text-gray-900">Price</dt>
+            <dd className="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">$ {selectedItem.price}</dd>
+          </div>
+
+          <div className="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+            <dt className="text-sm/6 font-medium text-gray-900">Ram</dt>
+            <dd className="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">{selectedItem.ram}</dd>
+          </div>
+
+          <div className="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+            <dt className="text-sm/6 font-medium text-gray-900">Processor</dt>
+            <dd className="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">{selectedItem.processor}</dd>
+          </div>
+
+          <div className="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+            <dt className="text-sm/6 font-medium text-gray-900">Graphic Card</dt>
+            <dd className="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">{selectedItem.graphics_card}</dd>
+          </div>
+
+          <div className="px-4 py- sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+            <dt className="text-sm/6 font-medium text-gray-900">Special Offer</dt>
+            <dd className="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">{selectedItem.special_offer}</dd>
+          </div>
+          
+          </dl></div>
+       </div>
+    </div>
+  
+)}
+
+{/* New Update Modal */}
+{editingItem && (
+        <UpdateInventoryModal
+          item={editingItem}
+          onClose={() => setEditingItem(null)}
+          onUpdateSuccess={handleUpdateInventoryItem}
+        />
       )}
+   
+ 
+
+      
     </div>
   );
 };

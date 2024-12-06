@@ -1,19 +1,17 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-
-import { MdDashboard } from 'react-icons/md';
+import { MdDashboard, MdMenu, MdClose } from 'react-icons/md';
 import { FaUserEdit } from 'react-icons/fa';
 import { MdOutlineInventory } from 'react-icons/md';
 import { UserContext } from '../../context/UserContext';
 
-export default function InventorymanagerNav() {
+export default function InventoryManagerNav() {
     const [activeItem, setActiveItem] = useState(null);
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const { user, logout } = useContext(UserContext);
-
     const location = useLocation();
 
     useEffect(() => {
-        // Update active item based on current route
         switch (location.pathname) {
             case '/inventorymanagerdash':
                 setActiveItem(1);
@@ -29,110 +27,128 @@ export default function InventorymanagerNav() {
         }
     }, [location.pathname]);
 
+    const toggleMobileMenu = () => {
+        setIsMobileMenuOpen(!isMobileMenuOpen);
+    };
+
+    const NavItems = () => (
+        <ul className="w-full">
+            <Link to="/inventorymanagerdash" onClick={() => setIsMobileMenuOpen(false)}>
+                <li>
+                    <div className={`flex items-center py-3 pl-4 md:pl-8 transition-all ${
+                        activeItem === 1
+                            ? 'bg-gray-300 text-black'
+                            : 'text-black hover:bg-gray-200 hover:text-black'
+                    }`}>
+                        <div className="mr-4 md:mr-8">
+                            <MdDashboard size={20} className="text-black" />
+                        </div>
+                        <div>
+                            <span className="text-base md:text-lg text-black">
+                                Dashboard
+                            </span>
+                        </div>
+                    </div>
+                </li>
+            </Link>
+            <Link to="/inventory" className="no-underline" onClick={() => setIsMobileMenuOpen(false)}>
+                <li>
+                    <div className={`flex items-center py-3 pl-4 md:pl-8 transition-all ${
+                        activeItem === 2
+                            ? 'bg-gray-300 text-black'
+                            : 'text-black hover:bg-gray-200 hover:text-black'
+                    }`}>
+                        <div className="mr-4 md:mr-8">
+                            <MdOutlineInventory size={20} className="text-black" />
+                        </div>
+                        <div>
+                            <span className="text-base md:text-lg text-black">
+                                Inventory
+                            </span>
+                        </div>
+                    </div>
+                </li>
+            </Link>
+            <Link to="/my-profile" className="no-underline" onClick={() => setIsMobileMenuOpen(false)}>
+                <li>
+                    <div className={`flex items-center py-3 pl-4 md:pl-8 transition-all ${
+                        activeItem === 3
+                            ? 'bg-gray-300 text-black'
+                            : 'text-black hover:bg-gray-200 hover:text-black'
+                    }`}>
+                        <div className="mr-4 md:mr-8">
+                            <FaUserEdit size={20} className="text-black" />
+                        </div>
+                        <div>
+                            <span className="text-base md:text-lg text-black">
+                                Profile Settings
+                            </span>
+                        </div>
+                    </div>
+                </li>
+            </Link>
+        </ul>
+    );
+
     return (
-        <div className='h-screen flex flex-col border-r-2 lg:w-[320px] sm:w-fit md:w-72 w-fit bg-gray-100'>
-            <div className='flex-grow pt-[60px]'>
-                <div className=' justify-center pb-[60px]'>
-                    <div className='flex justify-center'>
-                       <img src={user.image} alt='user' className='border-2 rounded-full w-[250px]'></img> 
+        <>
+            {/* Mobile Menu Button */}
+            <button
+                className="fixed top-4 left-4 z-50 p-2 rounded-lg bg-gray-200 md:hidden"
+                onClick={toggleMobileMenu}
+            >
+                {isMobileMenuOpen ? <MdClose size={24} /> : <MdMenu size={24} />}
+            </button>
+
+            {/* Sidebar Container */}
+            <div className={`
+                fixed md:static
+                inset-y-0 left-0
+                w-64 md:w-72 lg:w-80
+                transform ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
+                transition-transform duration-300 ease-in-out
+                flex flex-col
+                border-r-2 bg-gray-100
+                h-screen
+                z-40
+            `}>
+                <div className="flex-grow pt-16 md:pt-8">
+                    <div className="flex flex-col items-center pb-8">
+                        <div className="w-32 md:w-40 lg:w-48 aspect-square overflow-hidden rounded-full border-2">
+                            <img 
+                                src={user.image} 
+                                alt="user" 
+                                className="w-full h-full object-cover"
+                            />
+                        </div>
+                        <h1 className="pt-2 text-base md:text-lg font-bold">
+                            {user.fname} {user.lname}
+                        </h1>
                     </div>
                     
-                <h1 className='pt-2'><strong><span className='pr-1'>{user.fname}</span>{user.lname}</strong></h1>
+                    <nav className="flex-grow">
+                        <NavItems />
+                    </nav>
                 </div>
-                
-                    
-                
-                <nav className='flex-grow'>
-                    <ul className='text-left'>
-                        <Link to='/inventorymanagerdash'>
-                            <li>
-                                <div
-                                    className={`flex items-center py-3 pl-8 transition-all ${
-                                        activeItem === 1
-                                            ? 'bg-gray-300 text-black'
-                                            : 'text-black hover:bg-gray-200 hover:text-black'
-                                    }`}
-                                >
-                                    <div className='mr-8'>
-                                        <MdDashboard
-                                            size={20}
-                                            className='text-black'
-                                        />
-                                    </div>
-                                    <div>
-                                        <label
-                                            style={{ fontSize: '18px' }}
-                                            className='text-black'
-                                        >
-                                            Dashboard
-                                        </label>
-                                    </div>
-                                </div>
-                            </li>
-                        </Link>
-                        <Link to='/inventory' className='no-underline'>
-                            <li>
-                                <div
-                                    className={`flex items-center py-3 pl-8 transition-all ${
-                                        activeItem === 2
-                                            ? 'bg-gray-300 text-black'
-                                            : 'text-black hover:bg-gray-200 hover:text-black'
-                                    }`}
-                                >
-                                    <div className='mr-8'>
-                                        <MdOutlineInventory
-                                            size={20}
-                                            className='text-black'
-                                        />
-                                    </div>
-                                    <div>
-                                        <label
-                                            style={{ fontSize: '18px' }}
-                                            className='text-black'
-                                        >
-                                            Inventory
-                                        </label>
-                                    </div>
-                                </div>
-                            </li>
-                        </Link>
-                        <Link to='/my-profile' className='no-underline'>
-                            <li>
-                                <div
-                                    className={`flex items-center py-3 pl-8 transition-all ${
-                                        activeItem === 3
-                                            ? 'bg-gray-300 text-black'
-                                            : 'text-black hover:bg-gray-200 hover:text-black'
-                                    }`}
-                                >
-                                    <div className='mr-8'>
-                                        <FaUserEdit
-                                            size={20}
-                                            className='text-black'
-                                        />
-                                    </div>
-                                    <div>
-                                        <label
-                                            style={{ fontSize: '18px' }}
-                                            className='text-black'
-                                        >
-                                            Profile Settings
-                                        </label>
-                                    </div>
-                                </div>
-                            </li>
-                        </Link>
-                    </ul>
-                </nav>
+
+                <div className="p-4 md:p-6">
+                    <button 
+                        onClick={logout} 
+                        className="w-full py-2 md:py-3 text-white bg-black rounded-lg text-sm md:text-base
+                            hover:bg-gray-800 transition-colors duration-200"
+                    >
+                        Logout
+                    </button>
+                </div>
             </div>
-            <div className='flex justify-center pb-6'>
-                <button 
-                    onClick={logout} 
-                    className='w-[200px] py-3 text-white bg-black rounded-lg'
-                >
-                    Logout
-                </button>
-            </div>
-        </div>
+
+            {/* Overlay for mobile */}
+            {isMobileMenuOpen && (
+                <div 
+                    className="fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden"
+                    onClick={toggleMobileMenu}
+                />
+            )}
+        </>
     );
 }
