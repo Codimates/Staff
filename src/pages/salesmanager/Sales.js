@@ -1,42 +1,38 @@
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
 import SalesManagerNav from "../../componnets/SalesManager/SalesManagerNav";
 import SalesManagerHeadBar from "../../componnets/SalesManager/SalesManagerHeadBar";
-
-const filterSales = [
-  {
-    _id: "1",
-    salesID: "S001",
-    salesDate: "2024-12-01",
-    customerName: "John Doe",
-  },
-  {
-    _id: "2",
-    salesID: "S002",
-    salesDate: "2024-12-02",
-    customerName: "Jane Smith",
-  },
-  {
-    _id: "3",
-    salesID: "S003",
-    salesDate: "2024-12-03",
-    customerName: "Alice Johnson",
-  },
-  {
-    _id: "4",
-    salesID: "S004",
-    salesDate: "2024-12-04",
-    customerName: "Robert Brown",
-  },
-  {
-    _id: "5",
-    salesID: "S005",
-    salesDate: "2024-12-05",
-    customerName: "Emily Davis",
-  },
-];
+import axios from "axios";
 
 export default function Sales() {
+  const [salesData, setSalesData] = useState([]);
   const [search, setSearch] = useState(""); // Initialize search state
+
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        const response = await axios.get("/order/getordersispayedtrue");
+        const orders = response.data?.data || [];
+
+        // Process data for the table
+        const formattedData = orders.map((order) => ({
+          salesID: order._id,
+          salesDate: new Date(order.createdAt).toLocaleDateString(),
+          customerName: "Placeholder Customer", // Replace with actual customer name if available
+          products: order.products.map((product) => ({
+            quantity: product.quantity,
+            unit_price: product.unit_price,
+            total_price: product.total_price,
+          })),
+        }));
+
+        setSalesData(formattedData);
+      } catch (error) {
+        console.error("Error fetching orders:", error);
+      }
+    };
+
+    fetchOrders();
+  }, []);
 
   return (
     <div>
@@ -54,68 +50,74 @@ export default function Sales() {
             </div>
           </div>
           <div>
-            <div>
-              <hr />
+            <hr />
+            <div className="flex m-5 ml-7">
+              {/* Search bar */}
+              <input
+                type="text"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Search by Sales ID,Unit price or Total Price"
+                className="w-full max-w-lg p-3 text-sm border-2 border-gray-300 rounded-lg shadow-sm focus:outline-none focus:border-black"
+              />
+            </div>
+            <div className="m-7">
+              <table className="w-full border-4 border-collapse border-gray-100 table-auto">
+                <thead>
+                  <tr className="bg-gray-300 h-[60px]">
+                    <th className="p-2 border border-gray-400">Quantity</th>
+                    <th className="p-2 border border-gray-400">Unit Price</th>
+                    <th className="p-2 border border-gray-400">Total Price</th>
+                  </tr>
+                </thead>
+                <tbody className="bg-gray-50">
+                  {salesData
+                    .filter((sale) => {
+                      const lowerCaseSearch = search.toLowerCase();
 
-              <div className="flex m-5 ml-7">
-                <input
-                  type="text"
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  placeholder="Search by Sales ID, Date, or Customer Name..."
-                  className="w-full max-w-lg p-3 text-sm border-2 border-gray-300  rounded-lg shadow-sm focus:outline-none focus:border-black"
-                />
-              </div>
+                      // Check salesID, salesDate, customerName
+                      const isSaleMatch =
+                        sale.salesID.toLowerCase().includes(lowerCaseSearch) ||
+                        sale.salesDate
+                          .toLowerCase()
+                          .includes(lowerCaseSearch) ||
+                        sale.customerName
+                          .toLowerCase()
+                          .includes(lowerCaseSearch);
 
-              <div className="m-7">
-                <table className="w-full border-4 border-collapse border-gray-100 table-auto">
-                  <thead>
-                    <tr className="bg-gray-300 h-[60px]">
-                      <th className="p-2 border border-gray-400">Sales ID</th>
-                      <th className="p-2 border border-gray-400 ">
-                        Sales Date
-                      </th>
-                      <th className="p-2 border border-gray-400 ">
-                        Customer Name
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-gray-50">
-                    {filterSales
-                      .filter((sale) => {
-                        const lowerCaseSearch = search.toLowerCase();
-                        return (
-                          search === "" ||
-                          sale.salesID
-                            .toLowerCase()
-                            .includes(lowerCaseSearch) ||
-                          sale.salesDate
-                            .toLowerCase()
-                            .includes(lowerCaseSearch) ||
-                          sale.customerName
-                            .toLowerCase()
-                            .includes(lowerCaseSearch)
-                        );
-                      })
-                      .map((sale) => (
+                      // Check product fields
+                      const isProductMatch = sale.products.some((product) =>
+                        [
+                          product.quantity.toString(),
+                          product.unit_price.toString(),
+                          product.total_price.toString(),
+                        ].some((field) =>
+                          field.toLowerCase().includes(lowerCaseSearch)
+                        )
+                      );
+
+                      return search === "" || isSaleMatch || isProductMatch;
+                    })
+                    .map((sale) =>
+                      sale.products.map((product, index) => (
                         <tr
-                          key={sale._id}
+                          key={`${sale.salesID}-${index}`}
                           className="hover:bg-gray-200 hover:border-l-4 hover:border-gray-600 transition duration-150 ease-in-out h-[50px]"
                         >
                           <td className="p-2 border border-gray-400">
-                            {sale.salesID}
+                            {product.quantity}
                           </td>
                           <td className="p-2 border border-gray-400">
-                            {sale.salesDate}
+                            {product.unit_price}
                           </td>
                           <td className="p-2 border border-gray-400">
-                            {sale.customerName}
+                            {product.total_price}
                           </td>
                         </tr>
-                      ))}
-                  </tbody>
-                </table>
-              </div>
+                      ))
+                    )}
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
