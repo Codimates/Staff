@@ -94,7 +94,7 @@ export default function UpdateProfile({isOpen, onclose}) {
     if (!user) return <div>Loading...</div>;
 
     return (
-        <div className="container px-4 py-8 mx-auto flex justify-center">
+        <div className="container flex justify-center px-4 py-8 mx-auto">
             
             
             <form onSubmit={handleSubmit} className="p-6 space-y-6 w-[600px]">
@@ -104,11 +104,11 @@ export default function UpdateProfile({isOpen, onclose}) {
                         <img 
                             src={previewImage || '/default-avatar.png'} 
                             alt="Profile" 
-                            className="w-40 h-40 rounded-full object-cover border-4 border-white shadow-lg group-hover:opacity-70 transition-opacity duration-300"
+                            className="object-cover w-40 h-40 transition-opacity duration-300 border-4 border-white rounded-full shadow-lg group-hover:opacity-70"
                         />
                         <label 
                           htmlFor="imageUpload" 
-                          className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 cursor-pointer"
+                          className="absolute inset-0 flex items-center justify-center transition-opacity duration-300 opacity-0 cursor-pointer group-hover:opacity-100"
                         ></label>
 
                         
@@ -133,7 +133,7 @@ export default function UpdateProfile({isOpen, onclose}) {
                 <div className="grid grid-cols-2 gap-4 ">
                   
                   <div className=''>
-                    <label className="block text-sm font-medium text-gray-700 mb-2 text-left">First Name</label>
+                    <label className="block mb-2 text-sm font-medium text-left text-gray-700">First Name</label>
                     <input 
                         type="text" 
                         value={fname}
@@ -145,7 +145,7 @@ export default function UpdateProfile({isOpen, onclose}) {
 
                 {/* Last Name */}
                 <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-700 mb-2 text-left">Last Name</label>
+                    <label className="block mb-2 text-sm font-medium text-left text-gray-700">Last Name</label>
                     <input 
                         type="text" 
                         value={lname}
@@ -158,7 +158,7 @@ export default function UpdateProfile({isOpen, onclose}) {
 
                 {/* Email */}
                 <div className="space-y-4">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                    <label className="block mb-2 text-sm font-medium text-gray-700">Email</label>
                     <input 
                         type="email" 
                         value={email}

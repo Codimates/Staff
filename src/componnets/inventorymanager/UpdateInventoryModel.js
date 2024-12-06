@@ -132,6 +132,7 @@ const UpdateInventoryModal = ({ item, onClose, onUpdateSuccess }) => {
       console.error(error);
     }
   };
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
       <div className="w-full max-w-lg p-6 bg-white rounded-lg shadow-xl">
@@ -139,7 +140,7 @@ const UpdateInventoryModal = ({ item, onClose, onUpdateSuccess }) => {
           <h3 className="text-xl font-bold text-gray-800">Update Inventory Item</h3>
           <button
             onClick={onClose}
-            className="text-red-500 hover:text-red-700 transition-colors"
+            className="text-red-500 transition-colors hover:text-red-700"
           >
             <FaTimes />
           </button>
@@ -232,7 +233,7 @@ const UpdateInventoryModal = ({ item, onClose, onUpdateSuccess }) => {
                   <img
                     src={imageUrl}
                     alt={`Preview ${index}`}
-                    className="w-24 h-24 object-cover rounded"
+                    className="object-cover w-24 h-24 rounded"
                   />
                   <button
                     type="button"
@@ -242,7 +243,7 @@ const UpdateInventoryModal = ({ item, onClose, onUpdateSuccess }) => {
                         index < updatedItem.existingImages.length
                       )
                     }
-                    className="absolute top-0 right-0 bg-red-500 text-white p-1 rounded-full"
+                    className="absolute top-0 right-0 p-1 text-white bg-red-500 rounded-full"
                   >
                     <FaTrash className="text-xs" />
                   </button>
@@ -251,7 +252,7 @@ const UpdateInventoryModal = ({ item, onClose, onUpdateSuccess }) => {
 
               {previewImages.length < 3 && (
                 <label className="cursor-pointer">
-                  <div className="w-24 h-24 border-2 border-dashed border-gray-300 flex items-center justify-center rounded">
+                  <div className="flex items-center justify-center w-24 h-24 border-2 border-gray-300 border-dashed rounded">
                     +
                   </div>
                   <input
