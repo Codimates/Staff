@@ -37,14 +37,14 @@ export default function SalesManagerNav() {
             <img
               src={user.image}
               alt="user"
-              className="border-2 rounded-full w-[250px]"
+              className="border-2 rounded-full w-[250px] h-[250px]"
             ></img>
           </div>
 
           <h1 className="pt-2">
             <strong>
-              <span className="pr-1">pramuditha</span>
-              Sadeepa
+              <span className="pr-1">{user.fname}</span>
+              <span>{user.lname}</span>
             </strong>
           </h1>
         </div>

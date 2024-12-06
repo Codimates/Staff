@@ -1,6 +1,7 @@
 import React from 'react'
 import SalesManagerNav from '../../componnets/SalesManager/SalesManagerNav'
 import SalesManagerHeadBar from '../../componnets/SalesManager/SalesManagerHeadBar'
+import UpdateProfile from '../../componnets/SalesManager/SalesmanagerProfile'
 
 
 
@@ -25,9 +26,9 @@ export default function SalesManagerProfile() {
                   <SalesManagerHeadBar/>
                 </div>
           </div>
-          <div >
+          <div className='overflow-y-auto  h-[600px]' >
 
-            
+            <UpdateProfile/>
            
             <div>
             
