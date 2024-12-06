@@ -19,7 +19,7 @@ export default function SalesManagerHeadBar() {
       
 
       <p className='flex flex-col mb-1 mr-5'>
-        <span className='text-sm font-bold text-neutral-200 text-start'>Pramuditha</span>
+        <span className='text-sm font-bold text-neutral-200 text-start'>{user.fname}</span>
         <span className='text-xs font-bold text-neutral-500'>Sales Manager</span>
       </p>
 
