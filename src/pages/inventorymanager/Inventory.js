@@ -26,22 +26,32 @@ export default function Inventory() {
           <div className=''>
             {/* Buttons to toggle components */}
             <div className='flex justify-start pl-12 mb-4 space-x-4'>
-              <button
-                className='px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600'
-                onClick={() => setActiveComponent('InventoryManagement')}
-              >
-                Show Inventory Management
-              </button>
-              <button
-                className='px-4 py-2 text-white bg-green-500 rounded hover:bg-green-600'
-                onClick={() => setActiveComponent('AddBrand')}
-              >
-                Show Add Brand
-              </button>
+            
+
+            <div className="bg-gray-100 rounded-lg p-1 flex ">
+                <button 
+                  className={`px-2 sm:px-3 md:px-4 py-1 sm:py-2 rounded-lg  sm:text-base transition-colors text-xl   ${
+                    activeComponent === 'InventoryManagement' ? 'bg-[#19191A] text-white' : 'text-gray-700 hover:bg-gray-200'
+                  }`}
+                  onClick={() => setActiveComponent('InventoryManagement')}
+                >
+                   Show Inventory Management
+                </button>
+                <button 
+                  className={`px-2 sm:px-3 md:px-4 py-1 sm:py-2 rounded-lg text-xl sm:text-base transition-colors ${
+                    activeComponent === 'AddBrand' ? 'bg-[#19191A] text-white' : 'text-gray-700 hover:bg-gray-200'
+                  }`}
+                  onClick={() => setActiveComponent('AddBrand')}
+                >
+                    Show Brand Management
+                </button>
+              </div>
+
+              
             </div>
 
             {/* Scrollable container for components */}
-            <div className='h-[80vh] overflow-y-auto border p-4'>
+            <div className='h-[80vh] overflow-y-auto border  p-4'>
               {activeComponent === 'InventoryManagement' && <InventoryManagement />}
               {activeComponent === 'AddBrand' && <AddBrand />}
             </div>

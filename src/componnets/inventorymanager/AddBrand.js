@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { MdDelete } from 'react-icons/md';
-import { FaEdit } from "react-icons/fa";
+import { FaEdit,FaSearch,FaPlus } from "react-icons/fa";
 
 export default function AddBrand() {
     const [brands, setBrands] = useState([]);
@@ -83,26 +83,33 @@ export default function AddBrand() {
     return (
         <div className="container p-4 mx-auto">
             <h2 className="mb-4 text-2xl font-bold">Brands</h2>
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-4">
+  {/* Search Box */}
+  <div className="relative flex items-center w-full sm:w-auto">
+    <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-xl" />
+    <input
+      type="text"
+      value={searchTerm}
+      onChange={handleSearchChange}
+      placeholder="Search Products..."
+      className="w-full sm:w-96 pl-10 p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+    />
+  </div>
 
-            {/* Search Box */}
-            <div className="mb-4">
-                <input
-                    type="text"
-                    value={searchTerm}
-                    onChange={handleSearchChange}
-                    placeholder="Search brands..."
-                    className="w-full p-2 border rounded"
-                />
-            </div>
+  {/* Button */}
+  <div className="flex justify-end w-full sm:w-auto">
+    <button
+      onClick={() => setShowModal(true)}
+      className="flex items-center px-4 py-2 text-white bg-green-500 rounded hover:bg-green-600"
+    >
+        <div className='flex'>
+            <FaPlus></FaPlus>
+            <span>Add Brand</span>
+       </div>
+    </button>
+  </div>
+</div>
 
-            <div className='flex justify-end'>
-                <button
-                    onClick={() => setShowModal(true)}
-                    className="px-4 py-2 mb-4 text-white bg-green-500 rounded"
-                >
-                    Add Brand
-                </button>
-            </div>
 
             {/* Brand List */}
             <table className="w-full border border-collapse border-gray-300 table-auto">
