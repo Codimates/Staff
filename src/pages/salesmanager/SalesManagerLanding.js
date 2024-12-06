@@ -1,9 +1,14 @@
-import React from "react";
+
 import SalesManagerNav from "../../componnets/SalesManager/SalesManagerNav";
 import SalesManagerHeadBar from "../../componnets/SalesManager/SalesManagerHeadBar";
 import DashboardStatusGrid from "../../componnets/SalesManager/DashboardStatusGrid";
 import SalesBarchart from "../../componnets/SalesManager/SalesBarchart";
 import SalesLineChart from "../../componnets/SalesManager/SalesLineChart";
+
+
+
+
+
 
 export default function SalesmanagerLanding() {
   return (
