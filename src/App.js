@@ -22,8 +22,8 @@ import SalesTracking from './pages/salesmanager/SalesTracking';
 
 
 
-axios.defaults.baseURL = 'http://localhost:4000';
-axios.defaults.withCredentials = true
+axios.defaults.baseURL = 'http://141.144.204.231:4005';
+axios.defaults.withCredentials = false
 
 function App() {
   return (
@@ -58,3 +58,4 @@ function App() {
 }
 
 export default App;
+  
