@@ -18,6 +18,7 @@ import Inventory from './pages/inventorymanager/Inventory';
 import Profile from './pages/inventorymanager/Profile';
 import Users from './pages/adminPages/Users';
 import UserProfile from './pages/adminPages/UserProfile';
+import SalesTracking from './pages/salesmanager/SalesTracking';
 
 
 
@@ -46,6 +47,7 @@ function App() {
           <Route path='/salesmanagerdash' element={<ProtectedRoute><SalesManagerLanding/></ProtectedRoute>}/>    
           <Route path='/sales' element={<ProtectedRoute><Sales/></ProtectedRoute>}></Route>
           <Route path='/salesmanager-profile' element={<ProtectedRoute><SalesManagerProfile/></ProtectedRoute>}></Route>
+          <Route path='/salestracking' element={<ProtectedRoute><SalesTracking/></ProtectedRoute>}></Route>
       
         </Routes>
         </UserContextProvider>

@@ -21,6 +21,9 @@ export default function SalesManagerNav() {
       case "/sales":
         setActiveItem(2);
         break;
+      case "/salestracking":
+        setActiveItem(4);
+        break;
       case "/salesmanager-profile":
         setActiveItem(3);
         break;
@@ -86,6 +89,26 @@ export default function SalesManagerNav() {
                   <div>
                     <label style={{ fontSize: "18px" }} className="text-black">
                       Sales
+                    </label>
+                  </div>
+                </div>
+              </li>
+            </Link>
+            <Link to="/salestracking" className="no-underline">
+              <li>
+                <div
+                  className={`flex items-center py-3 pl-8 transition-all ${
+                    activeItem === 4
+                      ? "bg-gray-300 text-black"
+                      : "text-black hover:bg-gray-200 hover:text-black"
+                  }`}
+                >
+                  <div className="mr-8">
+                    <MdOutlineInventory size={20} className="text-black" />
+                  </div>
+                  <div>
+                    <label style={{ fontSize: "18px" }} className="text-black">
+                      Sales Tracking
                     </label>
                   </div>
                 </div>
