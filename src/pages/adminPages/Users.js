@@ -13,36 +13,41 @@ const Users = () => {
   const [users, setUsers] = useState([
     {
       id: "001",
-      name: "John Doe",
-      email: "johndoe@gmail.com",
+      name: "Janod Dulanjana",
+      email: "admin@gmail.com",
       phone: "0761234563",
       role: "Admin",
       status: "Active",
     },
     {
       id: "002",
-      name: "Jane Smith",
-      email: "janesmith@gmail.com",
+      name: "Nimasha Buddini",
+      email: "inventorymanager@gmail.com",
       phone: "0761234563",
-      role: "User",
+      role: "Inventory Manager",
       status: "Active",
     },
     {
       id: "003",
-      name: "Robert Brown",
-      email: "robertbrown@gmail.com",
+      name: "Shashini Sithara",
+      email: "admin@gmail.com",
       phone: "0761234563",
-      role: "Moderator",
+      role: "Admin",
+      status: "Active",
+    },
+    {
+      id: "004",
+      name: "Pramuditha Sadeepa",
+      email: "salesmanager@gmail.com",
+      phone: "0761234563",
+      role: "Sales Manager",
       status: "Active",
     },
   ]);
 
   const handleEdit = (updatedUser) => {
-    // Update the users state with the modified user details
     setUsers((prevUsers) =>
-      prevUsers.map((user) =>
-        user.id === updatedUser.id ? updatedUser : user
-      )
+      prevUsers.map((user) => (user.id === updatedUser.id ? updatedUser : user))
     );
   };
 
@@ -83,8 +88,8 @@ const Users = () => {
           <div className="bg-white rounded-lg shadow-md p-4">
             <div className="grid grid-cols-6 gap-4 py-2 font-semibold text-gray-600">
               <div>User ID</div>
-              <div>Name</div>
-              <div>Email</div>
+              <div>Full Name</div>
+              <div>E-mail</div>
               <div>Phone</div>
               <div>Role</div>
               <div>Status</div>

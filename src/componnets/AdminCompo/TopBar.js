@@ -6,7 +6,7 @@ const TopBar = () => {
   const { user } = useContext(UserContext);
 
   return (
-    <div className="flex items-center justify-between w-full px-6  h-[60px]">
+    <div className="flex items-center justify-between w-full px-6  h-[60px] mt-6">
       <h1 className="text-lg font-semibold text-gray-700">
         Hi, Welcome Back!
       </h1>
