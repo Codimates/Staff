@@ -1,0 +1,25 @@
+FROM node:18-alpine
+
+WORKDIR /app
+
+# COPY package.json package-lock.json ./
+COPY package*.json ./
+
+RUN npm install
+RUN npm i socket.io-client
+
+COPY . .
+
+RUN npm run build
+
+RUN npm install -g serve
+
+# FROM nginx:alpine
+# COPY --from=build /app/build /usr/share/nginx/html
+# COPY nginx.conf /etc/nginx/nginx.conf
+
+EXPOSE 3001
+
+CMD ["serve", "-s", "build", "-l", "3001"]
+# CMD ["nginx", "-g", "daemon off;"]
+# CMD ["nginx", "-g", "daemon off;"]
