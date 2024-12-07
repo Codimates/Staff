@@ -41,7 +41,7 @@ export default function AdminLanding() {
               </h3>
               <div>
                 <AiOutlineDeliveredProcedure className="text-4xl font-bold text-orange-600 ml-8" />
-                <p className="text-gray-700 mt-2 text-gray-600">1435</p>
+                <p className="text-gray-700 mt-2 text-gray-600">435</p>
               </div>
             </div>
             <div className="bg-white shadow-lg rounded-lg p-4">
@@ -50,7 +50,7 @@ export default function AdminLanding() {
               </h3>
               <div>
                 <IoPeopleOutline className="text-4xl font-bold text-orange-600 ml-8" />
-                <p className="text-gray-700 mt-2 text-gray-600">250</p>
+                <p className="text-gray-700 mt-2 text-gray-600">4</p>
               </div>
             </div>
           </div>

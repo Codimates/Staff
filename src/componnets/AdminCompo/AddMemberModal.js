@@ -2,10 +2,12 @@ import React, { useState, useEffect } from "react";
 
 const AddMemberModal = ({ showModal, onClose, onSave }) => {
   const [formData, setFormData] = useState({
+    id: "",
     name: "",
     email: "",
     phone: "",
     role: "",
+    status: "",
   });
 
   const [errors, setErrors] = useState({});
@@ -14,10 +16,12 @@ const AddMemberModal = ({ showModal, onClose, onSave }) => {
     // Reset form data when modal is closed or opened again
     if (!showModal) {
       setFormData({
+        id: "",
         name: "",
         email: "",
         phone: "",
         role: "",
+        status: "",
       });
       setErrors({});
     }
@@ -37,7 +41,11 @@ const AddMemberModal = ({ showModal, onClose, onSave }) => {
     let error = "";
 
     // Validate each field
-    if (field === "name") {
+    if (field === "id") {
+      if (!value.trim()) {
+        error = "User ID is required.";
+      }
+    } else if (field === "name") {
       if (!value.trim()) {
         error = "User name is required.";
       } else if (value.trim().length < 4) {
@@ -58,6 +66,10 @@ const AddMemberModal = ({ showModal, onClose, onSave }) => {
     } else if (field === "role") {
       if (!value.trim()) {
         error = "User role is required.";
+      }
+    } else if (field === "status") {
+      if (!value.trim()) {
+        error = "Status is required.";
       }
     }
 
@@ -80,7 +92,12 @@ const AddMemberModal = ({ showModal, onClose, onSave }) => {
 
   const handleSave = () => {
     if (validateForm()) {
-      onSave(formData);
+      // Generate userId if not provided
+      const newUser = {
+        ...formData,
+        userId: formData.userId || "generated-unique-id", // Use a unique id generator here
+      };
+      onSave(newUser);
       onClose(); // Close the modal after saving
     }
   };
@@ -92,86 +109,28 @@ const AddMemberModal = ({ showModal, onClose, onSave }) => {
           Add New Member
         </h2>
         <form className="space-y-4 text-left">
-          <div>
-            <label
-              className="block text-sm font-medium text-gray-600"
-              htmlFor="name"
-            >
-              User Name
-            </label>
-            <input
-              type="text"
-              id="name"
-              value={formData.name}
-              onChange={handleChange}
-              className={`w-full px-4 py-2 border rounded focus:outline-none focus:ring ${
-                errors.name ? "border-red-500" : "focus:ring-orange-300"
-              }`}
-            />
-            {errors.name && (
-              <p className="text-red-500 text-sm mt-1">{errors.name}</p>
-            )}
-          </div>
-          <div>
-            <label
-              className="block text-sm font-medium text-gray-600"
-              htmlFor="email"
-            >
-              Email Address
-            </label>
-            <input
-              type="email"
-              id="email"
-              value={formData.email}
-              onChange={handleChange}
-              className={`w-full px-4 py-2 border rounded focus:outline-none focus:ring ${
-                errors.email ? "border-red-500" : "focus:ring-orange-300"
-              }`}
-            />
-            {errors.email && (
-              <p className="text-red-500 text-sm mt-1">{errors.email}</p>
-            )}
-          </div>
-          <div>
-            <label
-              className="block text-sm font-medium text-gray-600"
-              htmlFor="phone"
-            >
-              Phone Number
-            </label>
-            <input
-              type="tel"
-              id="phone"
-              value={formData.phone}
-              onChange={handleChange}
-              className={`w-full px-4 py-2 border rounded focus:outline-none focus:ring ${
-                errors.phone ? "border-red-500" : "focus:ring-orange-300"
-              }`}
-            />
-            {errors.phone && (
-              <p className="text-red-500 text-sm mt-1">{errors.phone}</p>
-            )}
-          </div>
-          <div>
-            <label
-              className="block text-sm font-medium text-gray-600"
-              htmlFor="role"
-            >
-              User Role
-            </label>
-            <input
-              type="text"
-              id="role"
-              value={formData.role}
-              onChange={handleChange}
-              className={`w-full px-4 py-2 border rounded focus:outline-none focus:ring ${
-                errors.role ? "border-red-500" : "focus:ring-orange-300"
-              }`}
-            />
-            {errors.role && (
-              <p className="text-red-500 text-sm mt-1">{errors.role}</p>
-            )}
-          </div>
+          {Object.keys(formData).map((key) => (
+            <div key={key}>
+              <label
+                className="block text-sm font-medium text-gray-600"
+                htmlFor={key}
+              >
+                {key.charAt(0).toUpperCase() + key.slice(1)}
+              </label>
+              <input
+                type="text"
+                id={key}
+                value={formData[key]}
+                onChange={handleChange}
+                className={`w-full px-4 py-2 border rounded focus:outline-none focus:ring ${
+                  errors[key] ? "border-red-500" : "focus:ring-orange-300"
+                }`}
+              />
+              {errors[key] && (
+                <p className="text-red-500 text-sm mt-1">{errors[key]}</p>
+              )}
+            </div>
+          ))}
           <div className="flex justify-end">
             <button
               type="button"
